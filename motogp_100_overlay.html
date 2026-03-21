@@ -102,17 +102,12 @@ body{
 </div>
 
 <script>
-const url="https://opensheet.elk.sh/1RhK5IGiNsl8yZrteDAv_eO1AzmcczDNJXH1nAYkJ9sY/1";
-let prev={};
-
-function t(x){
-  if(!x||x=="-")return 9999;
-  let p=x.split(":");
-  return p[0]*60+ +p[1];
-}
+const url = "https://opensheet.elk.sh/1RhK5IGiNsl8yZrteDAv_eO1AzmcczDNJXH1nAYkJ9sY/1";
 
 async function load(){
-let d=await fetch(url).then(r=>r.json());
+  let data = await fetch(url).then(r=>r.json());
+  console.log(data);
+}
 
 let fastestTime=Math.min(...d.map(r=>t(r.lastLap)));
 let fastestRider=d.find(r=>t(r.lastLap)==fastestTime);
