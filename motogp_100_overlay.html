@@ -2,155 +2,72 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MotoGP 100% Overlay</title>
-
+<title>MotoGP Broadcast</title>
 <style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:transparent;
-  overflow:hidden;
-}
-
-#board{
-  position:fixed;
-  left:0;
-  top:0;
-  width:420px;
-  height:100%;
-  background:linear-gradient(to right, rgba(0,0,0,0.98), rgba(0,0,0,0.6));
-  padding:10px;
-  box-sizing:border-box;
-}
-
-.header{
-  color:white;
-  font-size:24px;
-  font-weight:bold;
-  margin-bottom:10px;
-}
-
-.fastestBox{
-  background:#ff0033;
-  color:white;
-  padding:10px;
-  margin-bottom:10px;
-  font-weight:bold;
-  font-size:18px;
-}
-
-.row{
-  display:flex;
-  align-items:center;
-  padding:10px;
-  margin-bottom:4px;
-  background:rgba(255,255,255,0.05);
-  color:white;
-  border-left:5px solid transparent;
-  transition:0.3s;
-}
-
-.pos{
-  width:35px;
-  font-size:18px;
-  font-weight:bold;
-}
-
-.name{
-  flex:1;
-  font-size:16px;
-}
-
-.time{
-  width:100px;
-  text-align:right;
-}
-
-.first{
-  background:gold;
-  color:black;
-}
-
-.fast{
-  color:#cc00ff;
-  border-left:5px solid #cc00ff;
-  font-weight:bold;
-}
-
-.up{animation:up .4s;}
-.down{animation:down .4s;}
-
-@keyframes up{
-  0%{transform:translateY(10px)}
-  100%{transform:translateY(0)}
-}
-@keyframes down{
-  0%{transform:translateY(-10px)}
-  100%{transform:translateY(0)}
-}
+body{margin:0;font-family:Arial;background:transparent;}
+#board{position:fixed;left:0;top:0;width:460px;height:100%;background:linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.5));padding:10px;}
+.header{color:white;font-size:22px;margin-bottom:10px;font-weight:bold;}
+.fastestBox{background:#ff0033;color:white;padding:10px;margin-bottom:10px;}
+.row{display:flex;align-items:center;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.05);color:white;border-left:4px solid transparent;transition:0.3s;}
+.pos{width:25px;}
+.flag{width:30px;}
+.name{flex:1;}
+.sector{width:60px;text-align:center;}
+.time{width:90px;text-align:right;}
+.arrow{width:25px;text-align:center;}
+.first{background:gold;color:black;}
+.fast{border-left:4px solid #cc00ff;color:#cc00ff;}
+.ducati{color:red;}
+.yamaha{color:#00aaff;}
+.honda{color:orange;}
+.up{animation:up 0.4s;}
+.down{animation:down 0.4s;}
+@keyframes up{0%{transform:translateY(10px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes down{0%{transform:translateY(-10px);opacity:0}100%{transform:translateY(0);opacity:1}}
 </style>
 </head>
-
 <body>
-
 <div id="board">
-  <div class="header">🏁 MotoGP LIVE</div>
-
-  <div id="fastestBox" class="fastestBox">FASTEST: -</div>
-
-  <div id="list"></div>
+<div class="header">🏁 MotoGP LIVE</div>
+<div id="fastestBox" class="fastestBox">FASTEST: -</div>
+<div id="list"></div>
 </div>
-
 <script>
 const url="https://opensheet.elk.sh/1jpQkVPwvQkbTgTMoy3r3JL3yxWp9AUeb0pqrW3SIjaI/1";
 let prev={};
-
-function t(x){
-  if(!x||x=="-")return 9999;
-  let p=x.split(":");
-  return p[0]*60+ +p[1];
-}
-
+function toSec(x){if(!x)return 9999;let p=x.split(":");return p[0]*60+parseFloat(p[1]);}
+function flag(code){return code=="TH"?"🇹🇭":code=="ES"?"🇪🇸":code=="IT"?"🇮🇹":code=="JP"?"🇯🇵":"🏳️";}
 async function load(){
-let d=await fetch(url).then(r=>r.json());
-
-let fastestTime=Math.min(...d.map(r=>t(r.lastLap)));
-let fastestRider=d.find(r=>t(r.lastLap)==fastestTime);
-
-if(fastestRider){
-  document.getElementById("fastestBox").innerHTML =
-    "⚡ FASTEST: " + fastestRider.name + " (" + fastestRider.lastLap + ")";
-}
-
+let res=await fetch(url);
+let data=await res.json();
+data.sort((a,b)=>a.position-b.position);
+let fastestTime=Math.min(...data.map(r=>toSec(r.lastLap)));
+let fastest=data.find(r=>toSec(r.lastLap)==fastestTime);
+if(fastest){document.getElementById("fastestBox").innerHTML="⚡ FASTEST: "+fastest.name+" ("+fastest.lastLap+")";}
 let html="";
-
-d.forEach(r=>{
-let fast=t(r.lastLap)==fastestTime?"fast":"";
-
-let move="";
+data.forEach(r=>{
+let fast=toSec(r.lastLap)==fastestTime?"fast":"";
+let move="";let arrow="";
 if(prev[r.name]){
- if(r.position<prev[r.name])move="up";
- if(r.position>prev[r.name])move="down";
+if(r.position<prev[r.name]){move="up";arrow="⬆️";}
+if(r.position>prev[r.name]){move="down";arrow="⬇️";}
 }
 prev[r.name]=r.position;
-
-html+=`
-<div class="row ${r.position==1?"first":""} ${fast} ${move}">
-  <div class="pos">${r.position}</div>
-  <div class="name">${r.name}</div>
-  <div class="time">${r.lastLap}</div>
-</div>
-`;
+html+=\`<div class="row \${r.position==1?"first":""} \${fast} \${move}">
+<div class="pos">\${r.position}</div>
+<div class="arrow">\${arrow}</div>
+<div class="flag">\${flag(r.country)}</div>
+<div class="name \${r.team}">\${r.name}</div>
+<div class="sector">\${r.s1||""} \${r.s2||""} \${r.s3||""}</div>
+<div class="time">\${r.lastLap}</div>
+</div>\`;
 });
-
 document.getElementById("list").innerHTML=html;
 }
-
-setInterval(load,1000);
+setInterval(load,2000);
 load();
-
 document.onclick=()=>document.documentElement.requestFullscreen();
 </script>
-
 </body>
 </html>
+:::
