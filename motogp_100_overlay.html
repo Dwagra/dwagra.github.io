@@ -4,22 +4,55 @@
 <meta charset="UTF-8">
 <title>MotoGP Broadcast</title>
 <style>
-body{margin:0;font-family:Arial;background:transparent;}
-#board{position:fixed;left:0;top:0;width:460px;height:100%;background:linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.5));padding:10px;}
+body{margin:22px;font-family:Arial;background:transparent;}
+#board{
+  position:fixed;
+  left:0;
+  top:0;
+  width:460px;
+  height:100%;
+  background:linear-gradient(to right, rgba(245,39,39,1), rgba(245,39,39,0.5));
+  padding:10px;
+
+  border-radius:20px;        /* 👈 เพิ่ม */
+  overflow:hidden;           /* 👈 กันมุมล้น */
+}
+
+.fastestBox{
+  background:#00ffe1;
+  color:white;
+  padding:10px;
+  margin-bottom:10px;
+
+  border-radius:12px;        /* 👈 เพิ่ม */
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  padding:8px;
+  margin-bottom:0.4px;
+  background:rgba(255,0,255,0.05);
+  color:white;
+  border-left:4px solid transparent;
+  transition:0.3s;
+
+  border-radius:10px;        /* 👈 เพิ่ม */
+}
 .header{color:white;font-size:22px;margin-bottom:10px;font-weight:bold;}
-.fastestBox{background:#2f00ff;color:white;padding:10px;margin-bottom:10px;}
-.row{display:flex;align-items:center;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.05);color:white;border-left:4px solid transparent;transition:0.3s;}
+.fastestBox{background:#00ffe1;color:white;padding:10px;margin-bottom:10px;}
+.row{display:flex;align-items:center;padding:8px;margin-bottom:4px;background:rgba(255,0,255,0.05);color:white;border-left:4px solid transparent;transition:0.3s;}
 .pos{width:25px;}
 .flag{width:30px;}
 .name{flex:1;}
 .sector{width:60px;text-align:center;}
 .time{width:90px;text-align:right;}
 .arrow{width:25px;text-align:center;}
-.first{background:gold;color:black;}
-.fast{border-left:4px solid #cc00ff;color:#cc00ff;}
+.first{background:gold;color:#ffffff;}
+.fast{border-left:4px solid #cc00ff;color:#ffffff;}
 .ducati{color:red;}
-.yamaha{color:#00aaff;}
-.honda{color:orange;}
+.yamaha{color:#ffffff;}
+.honda{color:#ffffff;}
 .up{animation:up 0.4s;}
 .down{animation:down 0.4s;}
 @keyframes up{0%{transform:translateY(10px);opacity:0}100%{transform:translateY(0);opacity:1}}
